@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build and publish to pypi
-      uses: JRubics/poetry-publish@v1
+      uses: JRubics/poetry-publish@v1.5
       with:
         repository_name: "sotalab-core"
         pypi_token: ${{ secrets.PYPI_TOKEN }}
