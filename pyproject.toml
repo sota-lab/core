@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sotalab-core"
-version = "0.1.2"
+version = "0.1.3"
 description = "SotaLab"
 authors = ["Ming Yang <ymviv@qq.com>"]
 license = "MIT"
