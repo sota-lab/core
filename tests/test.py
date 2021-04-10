@@ -1,5 +1,5 @@
-from typing import Dict
 from dataclasses import dataclass, field
+from typing import Dict
 
 from sotalab.core import register
 
