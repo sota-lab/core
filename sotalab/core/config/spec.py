@@ -15,6 +15,7 @@ __all__ = [
     "OptionalConfigSpec",
     "TuplesConfigSpec",
     "ListConfigSpec",
+    "DictConfigSpec",
     "ClassConfigSpec",
     "FunctionConfigSpec",
 ]
@@ -45,6 +46,9 @@ class ConfigSpec(metaclass=ABCMeta):
             elif origin is tuple:
                 internal_types = tp.__args__
                 return TuplesConfigSpec(internal_types)
+            elif origin is dict:
+                key_tp, value_tp = tp.__args__
+                return DictConfigSpec(key_tp, value_tp)
             else:
                 raise NotImplementedError(tp)
         elif tp in ClassRegistry():
@@ -58,7 +62,7 @@ class ConfigSpec(metaclass=ABCMeta):
 
 
 class ScalarConfigSpec(ConfigSpec):
-    def __init__(self, tp: Any):
+    def __init__(self, tp: type):
         self._tp = tp
 
     def instantiate(self, config: Any):
@@ -66,7 +70,7 @@ class ScalarConfigSpec(ConfigSpec):
 
 
 class OptionalConfigSpec(ConfigSpec):
-    def __init__(self, tp: Any):
+    def __init__(self, tp: type):
         self._internal_spec = ConfigSpec.from_type(tp)
 
     def instantiate(self, config: Any):
@@ -77,7 +81,7 @@ class OptionalConfigSpec(ConfigSpec):
 
 
 class TuplesConfigSpec(ConfigSpec):
-    def __init__(self, types: List[Any]):
+    def __init__(self, types: List[type]):
         self._internal_specs = [ConfigSpec.from_type(tp) for tp in types]
 
     def instantiate(self, config: CommentedSeq):
@@ -92,12 +96,25 @@ class TuplesConfigSpec(ConfigSpec):
 
 
 class ListConfigSpec(ConfigSpec):
-    def __init__(self, internal_type: Any):
+    def __init__(self, internal_type: type):
         self.internal_spec = ConfigSpec.from_type(internal_type)
 
     def instantiate(self, config: CommentedSeq):
         assert isinstance(config, CommentedSeq), config
         return list(map(lambda x: self.internal_spec.instantiate(x), config))
+
+
+class DictConfigSpec(ConfigSpec):
+    def __init__(self, key_type: type, value_type: type):
+        self.key_spec = ConfigSpec.from_type(key_type)
+        self.value_spec = ConfigSpec.from_type(value_type)
+
+    def instantiate(self, config: CommentedMap):
+        assert isinstance(config, CommentedMap), config
+        result = {}
+        for k, v in config.items():
+            result[self.key_spec.instantiate(k)] = self.value_spec.instantiate(v)
+        return result
 
 
 class ClassConfigSpec(ConfigSpec):
