@@ -74,7 +74,7 @@ class OptionalConfigSpec(ConfigSpec):
         self._internal_spec = ConfigSpec.from_type(tp)
 
     def instantiate(self, config: Any):
-        if config is None:
+        if config is None or config == "None":
             return None
         else:
             return self._internal_spec.instantiate(config)

@@ -13,7 +13,7 @@ DEFAULTS = [
 
 class Env(dict, metaclass=Singleton):
     def __init__(self):
-        ...
+        super().__init__()
 
     @staticmethod
     def from_config(cls, config: CommentedMap):
