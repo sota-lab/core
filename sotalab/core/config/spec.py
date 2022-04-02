@@ -6,7 +6,7 @@ from ..utils.yaml import CommentedMap, CommentedSeq, TaggedScalar
 from .registry import ClassRegistry
 from .type_utils import get_full_arg_spec
 
-GenericAlias = type(List)
+GenericAlias = type(List[int])
 NoneType = type(None)
 
 __all__ = [
